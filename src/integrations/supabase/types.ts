@@ -87,6 +87,33 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string | null
+          role: Database["public"]["Enums"]["user_role"] | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          id: string
+          name?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+        }
+        Relationships: []
+      }
       Review: {
         Row: {
           book_id: number | null
@@ -170,6 +197,7 @@ export type Database = {
       bookstatus: "available" | "borrowed"
       recordstatus: "active" | "completed"
       role: "admin" | "regular"
+      user_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never

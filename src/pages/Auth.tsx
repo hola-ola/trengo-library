@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LibraryBig, Mail, Key, AlertCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -16,31 +17,15 @@ const Auth = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   
-  // Check if user is already logged in
-  const [session, setSession] = useState<any>(null);
-  const [checking, setChecking] = useState(true);
-  
-  useState(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setChecking(false);
-    });
-    
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-    
-    return () => subscription.unsubscribe();
-  });
+  // Use the auth context to check if user is logged in
+  const { user, loading: authLoading } = useAuth();
   
   // If already logged in, redirect to home
-  if (checking) {
+  if (authLoading) {
     return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
   }
   
-  if (session) {
+  if (user) {
     return <Navigate to="/" />;
   }
   

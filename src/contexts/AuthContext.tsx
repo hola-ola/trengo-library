@@ -5,10 +5,19 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 
+interface ProfileType {
+  id: string;
+  name: string | null;
+  email: string | null;
+  avatar_url: string | null;
+  role: 'admin' | 'user';
+  created_at: string;
+}
+
 interface AuthContextType {
   session: Session | null;
   user: User | null;
-  profile: any | null;
+  profile: ProfileType | null;
   signOut: () => Promise<void>;
   loading: boolean;
 }
@@ -18,7 +27,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<any | null>(null);
+  const [profile, setProfile] = useState<ProfileType | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -56,16 +65,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchProfile = async (userId: string) => {
     try {
+      // Fix: Use raw SQL query since profiles table is not yet in the types
       const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userId)
-        .single();
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching profile:", error);
       } else {
-        setProfile(data);
+        setProfile(data as ProfileType);
       }
     } catch (error) {
       console.error("Error in fetchProfile:", error);
