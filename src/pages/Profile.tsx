@@ -9,6 +9,7 @@ import BookCard from "@/components/BookCard";
 import ReviewCard from "@/components/ReviewCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 import { Book, Star, Settings, Library } from "lucide-react";
 
 const Profile = () => {
