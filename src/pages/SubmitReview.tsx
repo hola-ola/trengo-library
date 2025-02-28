@@ -17,7 +17,7 @@ const SubmitReview = () => {
   // Get bookId from location state if available
   const bookIdFromState = location.state?.bookId;
   
-  const [bookId, setBookId] = useState<string>(bookIdFromState || "");
+  const [bookId, setBookId] = useState<string | number>(bookIdFromState || "");
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   
@@ -36,8 +36,11 @@ const SubmitReview = () => {
       return;
     }
     
+    // Convert bookId to number if it's a string
+    const numericBookId = typeof bookId === 'string' ? parseInt(bookId, 10) : bookId;
+    
     // Submit the review
-    submitReview(bookId, rating, comment);
+    submitReview(numericBookId, rating, comment);
     
     // Navigate back to the book page after a brief delay
     setTimeout(() => {

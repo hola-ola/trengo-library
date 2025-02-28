@@ -20,14 +20,21 @@ const BookCard = ({
     id,
     title,
     author,
-    cover,
+    cover_image,
     rating,
-    isAvailable,
+    is_available,
     genre
   } = book;
   
-  // Display only primary genre for compact cards
-  const primaryGenre = genre[0];
+  // Use cover_image if available, otherwise fallback to cover
+  const coverImage = cover_image || book.cover;
+  
+  // Use is_available if available, otherwise fallback to isAvailable
+  const available = is_available !== undefined ? is_available : book.isAvailable;
+  
+  // Handle genre as either string or array
+  const genreArray = typeof genre === 'string' ? [genre] : (book.genre as unknown as string[]);
+  const primaryGenre = genreArray?.[0] || '';
   
   if (variant === "compact") {
     return (
@@ -40,8 +47,8 @@ const BookCard = ({
         )}
       >
         <img
-          src={cover}
-          alt={title}
+          src={coverImage}
+          alt={title || ""}
           className="h-14 w-10 object-cover rounded-md"
         />
         <div className="flex flex-col">
@@ -63,8 +70,8 @@ const BookCard = ({
         )}
       >
         <img
-          src={cover}
-          alt={title}
+          src={coverImage}
+          alt={title || ""}
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
@@ -85,12 +92,12 @@ const BookCard = ({
               <span 
                 className={cn(
                   "text-sm px-2 py-1 rounded-full",
-                  isAvailable 
+                  available 
                     ? "bg-green-500/20 text-green-300" 
                     : "bg-red-500/20 text-red-300"
                 )}
               >
-                {isAvailable ? "Available" : "Rented"}
+                {available ? "Available" : "Rented"}
               </span>
               <span className="text-white/60 text-sm">
                 View details
@@ -114,8 +121,8 @@ const BookCard = ({
     >
       <div className="relative h-44 overflow-hidden">
         <img
-          src={cover}
-          alt={title}
+          src={coverImage}
+          alt={title || ""}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute top-2 right-2">
@@ -137,12 +144,12 @@ const BookCard = ({
           <span 
             className={cn(
               "text-xs px-2 py-1 rounded-full",
-              isAvailable 
+              available 
                 ? "bg-green-500/10 text-green-700" 
                 : "bg-red-500/10 text-red-700"
             )}
           >
-            {isAvailable ? "Available" : "Rented"}
+            {available ? "Available" : "Rented"}
           </span>
         </div>
       </div>

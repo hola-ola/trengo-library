@@ -35,7 +35,7 @@ export function useBooks() {
   const getReviewsForBook = (bookId: string | number) => {
     const id = typeof bookId === 'string' ? parseInt(bookId, 10) : bookId;
     return reviews.filter(review => {
-      const reviewBookId = review.bookId || review.book_id;
+      const reviewBookId = review.book_id || review.bookId;
       return reviewBookId === id;
     }) as unknown as Review[];
   };
@@ -99,7 +99,7 @@ export function useBooks() {
     
     const book = allBooks.find(b => b.id === bookId);
     
-    if (!book || !(book.is_available ?? true)) {
+    if (!book || !(book.is_available ?? book.isAvailable ?? true)) {
       toast({
         title: "Cannot rent book",
         description: "This book is not available for rent.",
@@ -115,7 +115,7 @@ export function useBooks() {
       setAllBooks(prev => 
         prev.map(book => 
           book.id === bookId 
-            ? { ...book, is_available: false } 
+            ? { ...book, is_available: false, isAvailable: false } 
             : book
         )
       );
@@ -138,11 +138,15 @@ export function useBooks() {
     const newReview: Review = {
       id: Date.now(),
       book_id: bookId,
+      bookId: bookId, // For backward compatibility
       user_id: parseInt(currentUser.id, 10),
+      userId: parseInt(currentUser.id, 10), // For backward compatibility
       rating,
       comment,
       created_at: new Date().toISOString(),
+      createdAt: new Date().toISOString(), // For backward compatibility
       user_name: currentUser.name,
+      username: currentUser.name, // For backward compatibility
     };
     
     // Simulate API call

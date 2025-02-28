@@ -13,6 +13,12 @@ export type Book = {
   genre: string | null;
   created_at: string;
   is_available?: boolean; // Derived from checkout status
+  
+  // Compatibility properties for existing components
+  cover?: string; // Alias for cover_image
+  isAvailable?: boolean; // Alias for is_available
+  yearPublished?: number; // Alias for published_year
+  addedAt?: string; // Alias for created_at
 };
 
 // Review type matching the Supabase Review table
@@ -26,6 +32,12 @@ export type Review = {
   // Additional fields that might be joined from profiles
   user_name?: string;
   user_avatar?: string;
+  
+  // Compatibility properties for existing components
+  bookId?: number; // Alias for book_id
+  userId?: number; // Alias for user_id
+  username?: string; // Alias for user_name
+  createdAt?: string; // Alias for created_at
 };
 
 // User type matching the Supabase Profile table (not the auth.users table)
@@ -36,6 +48,17 @@ export type UserProfile = {
   avatar_url: string | null;
   role: 'admin' | 'user';
   created_at: string;
+};
+
+// For backward compatibility
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  rentedBooks: string[];
+  reviews: string[];
+  isAdmin: boolean;
 };
 
 // Checkout type matching the Supabase Checkout table

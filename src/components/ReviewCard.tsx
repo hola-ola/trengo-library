@@ -11,15 +11,19 @@ interface ReviewCardProps {
 }
 
 const ReviewCard = ({ review, className }: ReviewCardProps) => {
-  const { username, rating, comment, createdAt } = review;
+  // Handle both new and old property names
+  const username = review.user_name || review.username;
+  const rating = review.rating || 0;
+  const comment = review.comment;
+  const createdDate = review.created_at || review.createdAt;
   
   // Format the date as relative time (e.g., "2 months ago")
-  const formattedDate = formatDistanceToNow(new Date(createdAt), {
+  const formattedDate = createdDate ? formatDistanceToNow(new Date(createdDate), {
     addSuffix: true,
-  });
+  }) : '';
   
   // Get user initials for avatar fallback
-  const getInitials = (name: string) => {
+  const getInitials = (name: string = '') => {
     return name
       .split(" ")
       .map(part => part[0])
