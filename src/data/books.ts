@@ -1,5 +1,5 @@
 
-import { Book, Review } from "@/types";
+import { Book, Review, User } from "@/types";
 
 export const books: Book[] = [
   {
@@ -49,7 +49,7 @@ export const books: Book[] = [
     title: "Dune",
     author: "Frank Herbert",
     cover: "https://images.unsplash.com/photo-1531709591319-2581bcdc45c9?q=80&w=800&auto=format&fit=crop",
-    description: "Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the "spice" melange, a drug capable of extending life and enhancing consciousness.",
+    description: "Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the 'spice' melange, a drug capable of extending life and enhancing consciousness.",
     rating: 4.9,
     yearPublished: 1965,
     isbn: "978-0441172719",
@@ -77,7 +77,7 @@ export const books: Book[] = [
     title: "Sapiens: A Brief History of Humankind",
     author: "Yuval Noah Harari",
     cover: "https://images.unsplash.com/photo-1585779034823-7e9ac8faec70?q=80&w=800&auto=format&fit=crop",
-    description: "From a renowned historian comes a groundbreaking narrative of humanity's creation and evolution—a #1 international bestseller—that explores the ways in which biology and history have defined us and enhanced our understanding of what it means to be "human."",
+    description: "From a renowned historian comes a groundbreaking narrative of humanity's creation and evolution—a #1 international bestseller—that explores the ways in which biology and history have defined us and enhanced our understanding of what it means to be 'human.'",
     rating: 4.7,
     yearPublished: 2014,
     isbn: "978-0062316097",
