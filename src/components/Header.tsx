@@ -2,13 +2,22 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Book, LibraryBig, User, Settings } from "lucide-react";
-import { currentUser } from "@/data/books";
+import { Button } from "@/components/ui/button";
+import { Book, LibraryBig, User, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
+  const { user, profile, signOut, loading } = useAuth();
   
   // Add scroll event listener
   useEffect(() => {
@@ -52,10 +61,12 @@ const Header = () => {
           <NavLink to="/" active={location.pathname === "/"}>
             Home
           </NavLink>
-          <NavLink to="/profile" active={location.pathname === "/profile"}>
-            My Books
-          </NavLink>
-          {currentUser.isAdmin && (
+          {user && (
+            <NavLink to="/profile" active={location.pathname === "/profile"}>
+              My Books
+            </NavLink>
+          )}
+          {profile?.role === "admin" && (
             <NavLink to="/admin" active={location.pathname === "/admin"}>
               Admin
             </NavLink>
@@ -64,18 +75,45 @@ const Header = () => {
         
         {/* User menu */}
         <div className="flex items-center space-x-4">
-          <Link
-            to="/profile"
-            className="flex items-center space-x-2 transition-opacity duration-200 hover:opacity-80"
-          >
-            <Avatar className="h-9 w-9">
-              <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-              <AvatarFallback>{getInitials(currentUser.name)}</AvatarFallback>
-            </Avatar>
-            <span className="text-sm font-medium hidden md:inline-block">
-              {currentUser.name}
-            </span>
-          </Link>
+          {!loading && !user ? (
+            <Link to="/auth">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span>Sign In</span>
+              </Button>
+            </Link>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="p-1 h-9 w-9 rounded-full" aria-label="User menu">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={profile?.avatar_url || ""} alt={profile?.name || ""} />
+                    <AvatarFallback>{profile?.name ? getInitials(profile.name) : "U"}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="px-2 py-1.5">
+                  <p className="text-sm font-medium">{profile?.name || user?.email}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/profile" className="cursor-pointer">Profile</Link>
+                </DropdownMenuItem>
+                {profile?.role === "admin" && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin" className="cursor-pointer">Admin Dashboard</Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={signOut} className="cursor-pointer text-destructive focus:text-destructive">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
     </header>
