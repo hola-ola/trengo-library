@@ -3,43 +3,53 @@ import { useState, useEffect } from "react";
 import { books, reviews, currentUser } from "@/data/books";
 import { Book, Review } from "@/types";
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export function useBooks() {
-  const [allBooks, setAllBooks] = useState<Book[]>(books);
+  const [allBooks, setAllBooks] = useState<Book[]>(books as unknown as Book[]);
   const [loading, setLoading] = useState(false);
 
   // Get top rated books (4.7 and above)
   const getTopRatedBooks = () => {
-    return allBooks.filter(book => book.rating >= 4.7);
+    return allBooks.filter(book => {
+      const bookRating = book.rating || 0;
+      return bookRating >= 4.7;
+    });
   };
 
   // Get recently added books (sort by addedAt)
   const getRecentlyAddedBooks = () => {
     return [...allBooks].sort((a, b) => 
-      new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime()
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     ).slice(0, 3);
   };
 
   // Get book by ID
-  const getBookById = (id: string) => {
-    return allBooks.find(book => book.id === id);
+  const getBookById = (id: string | number) => {
+    // Handle both string and number IDs for backward compatibility
+    const bookId = typeof id === 'string' ? parseInt(id, 10) : id;
+    return allBooks.find(book => book.id === bookId);
   };
 
   // Get reviews for a book
-  const getReviewsForBook = (bookId: string) => {
-    return reviews.filter(review => review.bookId === bookId);
+  const getReviewsForBook = (bookId: string | number) => {
+    const id = typeof bookId === 'string' ? parseInt(bookId, 10) : bookId;
+    return reviews.filter(review => {
+      const reviewBookId = review.bookId || review.book_id;
+      return reviewBookId === id;
+    }) as unknown as Review[];
   };
 
   // Add a new book (admin only)
-  const addBook = (book: Omit<Book, "id" | "addedAt">) => {
+  const addBook = (book: Omit<Book, "id" | "created_at">) => {
     setLoading(true);
     
     // Simulate API call
     setTimeout(() => {
       const newBook: Book = {
         ...book,
-        id: `book-${Date.now()}`,
-        addedAt: new Date().toISOString(),
+        id: Date.now(),
+        created_at: new Date().toISOString(),
       };
       
       setAllBooks(prev => [...prev, newBook]);
@@ -52,7 +62,7 @@ export function useBooks() {
   };
 
   // Update a book (admin only)
-  const updateBook = (id: string, updates: Partial<Book>) => {
+  const updateBook = (id: number, updates: Partial<Book>) => {
     setLoading(true);
     
     // Simulate API call
@@ -69,7 +79,7 @@ export function useBooks() {
   };
 
   // Delete a book (admin only)
-  const deleteBook = (id: string) => {
+  const deleteBook = (id: number) => {
     setLoading(true);
     
     // Simulate API call
@@ -84,12 +94,12 @@ export function useBooks() {
   };
 
   // Rent a book
-  const rentBook = (bookId: string) => {
+  const rentBook = (bookId: number) => {
     setLoading(true);
     
     const book = allBooks.find(b => b.id === bookId);
     
-    if (!book || !book.isAvailable) {
+    if (!book || !(book.is_available ?? true)) {
       toast({
         title: "Cannot rent book",
         description: "This book is not available for rent.",
@@ -105,7 +115,7 @@ export function useBooks() {
       setAllBooks(prev => 
         prev.map(book => 
           book.id === bookId 
-            ? { ...book, isAvailable: false } 
+            ? { ...book, is_available: false } 
             : book
         )
       );
@@ -121,18 +131,18 @@ export function useBooks() {
   };
 
   // Submit a review
-  const submitReview = (bookId: string, rating: number, comment: string) => {
+  const submitReview = (bookId: number, rating: number, comment: string) => {
     setLoading(true);
     
     // In a real app, we would save this to a database
     const newReview: Review = {
-      id: `review-${Date.now()}`,
-      bookId,
-      userId: currentUser.id,
-      username: currentUser.name,
+      id: Date.now(),
+      book_id: bookId,
+      user_id: parseInt(currentUser.id, 10),
       rating,
       comment,
-      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+      user_name: currentUser.name,
     };
     
     // Simulate API call

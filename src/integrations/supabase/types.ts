@@ -18,6 +18,7 @@ export type Database = {
           genre: string | null
           id: number
           isbn: string | null
+          pages: number | null
           published_year: number | null
           title: string | null
         }
@@ -29,6 +30,7 @@ export type Database = {
           genre?: string | null
           id?: number
           isbn?: string | null
+          pages?: number | null
           published_year?: number | null
           title?: string | null
         }
@@ -40,6 +42,7 @@ export type Database = {
           genre?: string | null
           id?: number
           isbn?: string | null
+          pages?: number | null
           published_year?: number | null
           title?: string | null
         }
